@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Banque Populaire - Simulation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5fb;
+      color: #003366;
+      max-width: 480px;
+      margin: auto;
+      padding: 20px;
+    }
+    header img {
+      height: 40px;
+      margin-bottom: 10px;
+    }
+    h1, h2 {
+      color: #004481;
+    }
+    input, button, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 12px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background: #004481;
+      color: #fff;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .menu {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding-top: 15px;
+    }
+    .hidden {
+      display: none;
+    }
+    #progressBar {
+      width: 100%;
+      background: #ddd;
+      margin-top: 15px;
+      height: 24px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    #progress {
+      height: 100%;
+      width: 0%;
+      background: #00aa00;
+      text-align: center;
+      color: #fff;
+      line-height: 24px;
+    }
+  
+    .carte {
+      background: linear-gradient(135deg, #003366, #3366cc);
+      color: white;
+      border-radius: 16px;
+      padding: 20px;
+      position: relative;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      width: 100%;
+      margin: 20px 0;
+    }
+    .carte .logo {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      height: 40px;
+    }
+    .carte-number {
+      font-size: 1.4em;
+      letter-spacing: 2px;
+      margin: 40px 0 20px 0;
+    }
+    .carte-info {
+      display: flex;
+      justify-content: space-between;
+    }
+    .carte-label {
+      font-size: 0.7em;
+      color: #ccc;
+    }
+
+    .menu {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding: 10px 0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-width: 480px;
+      background: white;
+    }
+    .menu span {
+      text-align: center;
+      font-size: 14px;
+      color: #004481;
+    }
+    .menu i {
+      font-size: 20px;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    
+.menu {
+  display: flex;
+  justify-content: space-around;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-width: 480px;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  padding: 5px 0;
+}
+.menu span {
+  position: relative;
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  color: #004481;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.menu i {
+  font-size: 20px;
+  margin-bottom: 4px;
+  display: block;
+}
+.menu span.active {
+  color: #007bff;
+}
+.menu span.active::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 30%;
+  width: 40%;
+  height: 3px;
+  background: #007bff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+</style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<header>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Banque_Populaire_logo.svg/2560px-Banque_Populaire_logo.svg.png" alt="Logo Banque Populaire">
+  <h1>Espace Banque Populaire</h1>
+</header>
+
+<div id="login">
+  <h2>Connexion</h2>
+  <input type="text" id="email" placeholder="Adresse Gmail" value="banquepopulai886@gmail.com" />
+  <input type="password" id="pass" placeholder="Mot de passe" value="972272" />
+  <button onclick="connecter()">Se connecter</button>
+</div>
+
+<div id="dashboard" class="hidden">
+  <h2>Bonjour 👋</h2>
+  <div style="background:#007bff; color:white; border-radius:12px; padding:20px; margin-bottom:20px;">
+    <p style="font-size:18px; margin:0;">💰 Solde du compte :</p>
+    <p style="font-size:28px; font-weight:bold; margin:0;">90 000 €</p>
+    <div style="margin-top:15px; display:flex; gap:10px;">
+      <button onclick="montrerForm()" style="background:#ffc107; color:#000;">Effectuer un virement ➡️</button>
+      <button style="background:#28a745;" onclick="montrerCarte()">Ma carte</button>
+    </div>
+  </div>
+
+  <div id="historique" style="margin-bottom: 20px;">
+    <h3>🧾 Historique des transactions</h3>
+    <ul style="list-style: none; padding: 0;">
+      <li>📤 Virement - 2 000 € à Paul - 10/07/2025</li>
+      <li>💳 Paiement CB - 150 € - Amazon - 08/07/2025</li>
+      <li>🏦 Retrait - 100 € - DAB BRED - 06/07/2025</li>
+    </ul>
+  </div>
+  
+  <div class="menu">
+    <span onclick="retourMenu()" class="active">
+      <i class="fas fa-wallet"></i><br>Solde
+    </span>
+    <span onclick="montrerCarte()">
+      <i class="fas fa-credit-card"></i><br>Ma carte
+    </span>
+    <span onclick="montrerForm()">
+      <i class="fas fa-paper-plane"></i><br>Virement
+    </span>
+    <span onclick="montrerCarte()">
+      <i class="fas fa-user-circle"></i><br>Mon compte
+    </span>
+  </div>
+    
+</div>
+
+<div id="formulaire" class="hidden">
+  <h2>Formulaire de virement</h2>
+  <input type="text" id="rib" placeholder="RIB / IBAN" />
+  <input type="text" id="nom" placeholder="Nom du bénéficiaire" />
+  <input type="text" id="banque" placeholder="Nom de la banque" />
+  <input type="number" id="montant" placeholder="Montant à virer (€)" />
+  <input type="text" id="motif" placeholder="Motif du virement" />
+  <button onclick="demanderCode()">Suivant</button>
+</div>
+
+<div id="securite" class="hidden">
+  <h2>Code de sécurité</h2>
+  <p>📩 Un SMS vous a été envoyé. Veuillez entrer le code pour poursuivre.</p>
+  <div id="infosVirement" style="background:#eef; padding:10px; margin:10px 0; border-radius:8px;"></div>
+  <input type="text" id="code" placeholder="Entrer le code de sécurité" />
+  <button onclick="demarrerVirement()">Valider</button>
+</div>
+
+<div id="progression" class="hidden">
+  <h2>Traitement du virement...</h2>
+  <div id="progressBar"><div id="progress">0%</div></div>
+</div>
+
+<div id="messageFinal" class="hidden">
+  <h2>⚠️ Virement suspendu</h2>
+  <p>
+    📩 <strong>BRED Banque Populaire</strong><br />
+    Votre opération de virement de 90 000 € est actuellement suspendue.<br />
+    Le compte du bénéficiaire ne peut pas recevoir ce montant.<br />
+    Pour finaliser la transaction, la création d’un compte BRED est requise.<br />
+    💼 Des frais de traitement de <strong>1 500 €</strong> sont exigés pour l’activation.
+  </p>
+  <button onclick="retourMenu()">⬅️ Retour au menu</button>
+</div>
+
+<div id="carteInfo" class="hidden">
+
+<div class="carte">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_2021.svg" class="logo" alt="VISA" />
+  <div class="carte-number">4111 1111 1111 1111</div>
+  <div class="carte-info">
+    <div>
+      <div class="carte-label">NOM</div>
+      <div>JEAN DUPONT</div>
+    </div>
+    <div>
+      <div class="carte-label">EXP</div>
+      <div>12/28</div>
+    </div>
+    <div>
+      <div class="carte-label">CVC</div>
+      <div>123</div>
+    </div>
+  </div>
+</div>
+
+  <h2>Ma carte bancaire</h2>
+  <p>💳 Numéro : 4111 1111 1111 1111</p>
+  <p>📅 Expiration : 12/28</p>
+  <p>🔒 Cryptogramme : 123</p>
+  <button onclick="retourMenu()">⬅️ Retour au menu</button>
+  <button onclick="deconnecter()" style="background:red;">🚪 Déconnexion</button>
+</div>
+
+<script>
+  function connecter() {
+    document.getElementById('login').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+  }
+
+  function montrerForm() {
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('formulaire').classList.remove('hidden');
+  }
+
+  function demanderCode() {
+    const rib = document.getElementById('rib').value;
+    const nom = document.getElementById('nom').value;
+    const banque = document.getElementById('banque').value;
+    const montant = document.getElementById('montant').value;
+    const motif = document.getElementById('motif').value;
+
+    document.getElementById('formulaire').classList.add('hidden');
+    document.getElementById('securite').classList.remove('hidden');
+
+    const infos = `
+      <strong>Détails du virement :</strong><br />
+      🧑 Bénéficiaire : ${nom}<br />
+      🏦 Banque : ${banque}<br />
+      🔢 RIB : ${rib}<br />
+      💶 Montant : ${montant} €<br />
+      📝 Motif : ${motif}
+    `;
+    document.getElementById('infosVirement').innerHTML = infos;
+  }
+
+  function demarrerVirement() {
+    const code = document.getElementById('code').value;
+    if(code !== 'AZE124') {
+      alert('Code incorrect !');
+      return;
+    }
+    document.getElementById('securite').classList.add('hidden');
+    document.getElementById('progression').classList.remove('hidden');
+    let i = 0;
+    const progressElem = document.getElementById('progress');
+    const interval = setInterval(() => {
+      if(i >= 99) {
+        clearInterval(interval);
+        document.getElementById('progression').classList.add('hidden');
+        // Afficher les infos du virement dans le message final
+const infosVirement = document.getElementById('infosVirement').innerHTML;
+const messageFinal = document.getElementById('messageFinal');
+messageFinal.innerHTML = `
+  <h2>❌ Échec du virement</h2>
+  <div style="background:#fee; padding:10px; margin:10px 0; border-radius:8px;">
+    ${infosVirement}
+  </div>
+  <p>
+    📩 <strong>BRED Banque Populaire</strong><br />
+    Votre opération de virement est actuellement <strong>suspendue</strong>.<br />
+    Le compte du bénéficiaire ne peut pas recevoir ce montant.<br />
+    Pour finaliser la transaction, la création d’un compte BRED est requise.<br />
+    💼 Des frais de traitement de <strong>1 500 €</strong> sont exigés pour l’activation.
+  </p>
+  <button onclick="retourMenu()">⬅️ Retour au menu</button>
+`;
+document.getElementById('messageFinal').classList.remove('hidden');
+      } else {
+        i++;
+        progressElem.style.width = i + '%';
+        progressElem.textContent = i + '%';
+      }
+    }, 300);
+  }
+
+  function retourMenu() {
+    document.getElementById('formulaire').classList.add('hidden');
+    document.getElementById('securite').classList.add('hidden');
+    document.getElementById('progression').classList.add('hidden');
+    document.getElementById('messageFinal').classList.add('hidden');
+    document.getElementById('carteInfo').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+  }
+
+  function montrerCarte() {
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('carteInfo').classList.remove('hidden');
+  }
+
+  function deconnecter() {
+    document.getElementById('carteInfo').classList.add('hidden');
+    document.getElementById('login').classList.remove('hidden');
+  }
+
+// Gestion surlignement dynamique sur le menu
+document.querySelectorAll('.menu span').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.menu span').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+</script>
+
+</body>
+</html>
